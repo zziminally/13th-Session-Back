@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import views
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.http import Http404
 from .models import *
 from .serializers import *
@@ -10,6 +11,7 @@ from django.shortcuts import get_object_or_404
 
 # Create your views here.
 class PostList(views.APIView) :
+    permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         post = Post.objects.all()
         serializer = PostSerializer(post, many=True)
@@ -46,3 +48,11 @@ class PostDetail(views.APIView):
         post = get_object_or_404(Post, pk=pk)
         post.delete()
         return Response({"message":"게시물 삭제 성공"})
+    
+class Comment(views.APIView):
+    def post(self, request, format=None):
+        serializer=CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
