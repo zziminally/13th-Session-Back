@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             username=validated_data['username'],
         )
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data['password']) #암호화 한 후 저장
         user.save()
 
         return user
